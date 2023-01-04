@@ -20,8 +20,8 @@ function OpenVehicleMenu(businessID)
         return ShowNotification(_L("not_duty"))
     end
     local options = {}
-    for i=1, #cfg.vehicles do 
-        if CanAccessGroup(cfg.vehicles[i].groups) then 
+    for i=1, #cfg.vehicles do
+        if CanAccessGroup(cfg.vehicles[i].groups) then
             table.insert(options, {label = cfg.vehicles[i].label, value = i})
         end
     end
@@ -39,14 +39,14 @@ function OpenVehicleMenu(businessID)
         TaskWarpPedIntoVehicle(ped, vehicle, -1)
         ShowNotification(_L("vehicle_spawned"))
     end)
-    
-    lib.showMenu('pickle_taxijob_vehicle')    
+
+    lib.showMenu('pickle_taxijob_vehicle')
 end
 
 function InteractLocation(businessID, locationID)
-    if locationID == "vehicle" then 
-        local vehicle = GetVehiclePedIsIn(PlayerPedId()) 
-        if vehicle ~= 0 then 
+    if locationID == "vehicle" then
+        local vehicle = GetVehiclePedIsIn(PlayerPedId())
+        if vehicle ~= 0 then
             TaskLeaveAnyVehicle(PlayerPedId())
             Wait(1500)
             DeleteEntity(vehicle)
@@ -54,24 +54,24 @@ function InteractLocation(businessID, locationID)
         else
             OpenVehicleMenu(businessID)
         end
-    elseif locationID == "boss" then 
+    elseif locationID == "boss" then
         AccessBossMenu(businessID)
-    elseif locationID == "duty" then 
+    elseif locationID == "duty" then
         SetDutyStatus(businessID, not STATUS.DUTY)
     end
 end
 
-function DisplayHelp(businessID, locationID) 
-    if locationID == "vehicle" then 
-        if GetVehiclePedIsIn(PlayerPedId()) ~= 0 then 
+function DisplayHelp(businessID, locationID)
+    if locationID == "vehicle" then
+        if GetVehiclePedIsIn(PlayerPedId()) ~= 0 then
             ShowHelpNotification(_L("marker_remove_vehicle"))
         else
             ShowHelpNotification(_L("marker_interact_vehicle"))
         end
-    elseif locationID == "boss" then 
+    elseif locationID == "boss" then
         ShowHelpNotification(_L("marker_interact_boss"))
-    elseif locationID == "duty" then 
-        ShowHelpNotification(_L("marker_interact_duty", STATUS.DUTY and "off" or "on"))      
+    elseif locationID == "duty" then
+        ShowHelpNotification(_L("marker_interact_duty", STATUS.DUTY and "off" or "on"))
     end
 end
 
@@ -80,13 +80,13 @@ RegisterNetEvent("pickle_taxijob:onDutyUpdate", function(businessID, bool)
     STATUS.DUTY = bool
 end)
 
-CreateThread(function() 
-    for i=1, #Config.Businesses do 
-        if Config.Businesses[i].blip then 
+CreateThread(function()
+    for i=1, #Config.Businesses do
+        if Config.Businesses[i].blip then
             CreateBlip(Config.Businesses[i].blip)
         end
     end
-    while true do 
+--[[     while true do 
         local wait = 1000
         for i=1, #Config.Businesses do 
             local cfg = Config.Businesses[i]
@@ -105,5 +105,46 @@ CreateThread(function()
             end
         end
         Wait(wait)
-    end
+    end ]]
 end)
+-- Create Zones and Blips
+
+local function nearby(self)
+    DrawMarker(2, self.coords.x, self.coords.y, self.coords.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.25, 0.25, 0.25, 255, 255, 255, 127, false, true)
+
+    if self.currentDistance < 1 and IsControlJustReleased(0, 38) then
+        
+        lib.hideTextUI()
+        InteractLocation(self.businessID, self.locationID)
+    end
+end
+
+local hasTextUi = false
+
+local function onEnter(self)
+    hasTextUi = true
+    DisplayHelp(self.businessID, self.locationID)
+end
+
+local function onExit()
+    if hasTextUi then
+        lib.hideTextUI()
+    end
+end
+
+for i=1, #Config.Businesses do
+    local cfg = Config.Businesses[i]
+    for k,v in pairs(cfg.locations) do
+        for p = 1, #k do
+            lib.points.new({
+                coords = v.xyz,
+                distance = 1.5,
+                nearby = nearby,
+                onEnter = onEnter,
+                onExit = onExit,
+                businessID = i,
+                locationID = k
+            })
+        end
+    end
+end

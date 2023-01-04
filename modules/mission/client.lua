@@ -39,6 +39,8 @@ function StartMission(lastIndex)
     mission = {}
     mission.from = GetRandomInt(1, #cfg.locations, lastIndex)
     mission.to = GetRandomInt(1, #cfg.locations, mission.from)
+    print(mission.from)
+    print(mission.to)
     mission.model = cfg.models[GetRandomInt(1, #cfg.models)]
     mission.ped = nil
     mission.taxi = GetVehiclePedIsIn(PlayerPedId())
@@ -92,6 +94,7 @@ function StartMission(lastIndex)
     
     if (mission and mission.status == "dropoff") then
         local coords, heading = v3(cfg.locations[mission.to])
+        print(cfg.locations[mission.to])
         local exitingVehicle = false
 
         ShowNotification(_L("taxi_dropoff"))
@@ -109,7 +112,7 @@ function StartMission(lastIndex)
             if (not exitingVehicle and GetVehiclePedIsIn(mission.ped) ~= mission.taxi) or (not DoesEntityExist(mission.ped) or IsEntityDead(mission.ped)) then 
                 mission.status = "fail"
             end
-            if (dist < 5.0 and not exitingVehicle) then 
+            if (dist < 5.0 and not exitingVehicle) then
                 exitingVehicle = true
                 TaskLeaveAnyVehicle(mission.ped, 1, 1)
             elseif exitingVehicle and GetVehiclePedIsIn(mission.ped) ~= mission.taxi then
@@ -129,7 +132,7 @@ function StartMission(lastIndex)
         ServerCallback("pickle_taxijob:npcMissionComplete", function(result)
             if result then
                 local ped = mission.ped
-                TaskWanderStandard(ped, 1, 1)
+                TaskWanderStandard(ped, 10.0, 10.0)
                 SetTimeout(5000, function()
                     DeleteEntity(ped)
                 end)

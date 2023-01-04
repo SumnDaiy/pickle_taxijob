@@ -59,7 +59,7 @@ function CanAccessGroup(source, data)
         if (pdata.job.name == k and pdata.job.grade >= v) then return true end
     end
     return false
-end 
+end
 
 function GetIdentifier(source)
     local xPlayer = ESX.GetPlayerFromId(source)
