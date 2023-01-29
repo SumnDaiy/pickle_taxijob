@@ -39,8 +39,6 @@ function StartMission(lastIndex)
     mission = {}
     mission.from = GetRandomInt(1, #cfg.locations, lastIndex)
     mission.to = GetRandomInt(1, #cfg.locations, mission.from)
-    print(mission.from)
-    print(mission.to)
     mission.model = cfg.models[GetRandomInt(1, #cfg.models)]
     mission.ped = nil
     mission.taxi = GetVehiclePedIsIn(PlayerPedId())
@@ -55,7 +53,7 @@ function StartMission(lastIndex)
     end
 
     if (mission and mission.status == "pickup") then
-        local coords, heading = v3(cfg.locations[mission.from])
+        local coords = cfg.locations[mission.from]
         local enteringVehicle = false
 
         ShowNotification(_L("taxi_pickup"))
@@ -65,14 +63,14 @@ function StartMission(lastIndex)
             local wait = 1000
             local ped = PlayerPedId()
             local pedCoords = GetEntityCoords(ped)
-            local dist = #(coords - pedCoords)
+            local dist = #(coords.xyz - pedCoords)
             if (not DoesEntityExist(mission.taxi) or GetEntityHealth(mission.taxi) == 0) then 
                 mission.status = "fail"
             end
             if (dist < 60.0) then 
                 if not mission.ped then
                     enteringVehicle = false
-                    mission.ped = CreateNPC(mission.model, coords.x, coords.y, coords.z, heading, true, true)
+                    mission.ped = CreateNPC(mission.model, coords.x, coords.y, coords.z, coords.w, true, true)
                 else
                     if IsEntityDead(mission.ped) then 
                         mission.status = "fail"
@@ -93,8 +91,7 @@ function StartMission(lastIndex)
     end
     
     if (mission and mission.status == "dropoff") then
-        local coords, heading = v3(cfg.locations[mission.to])
-        print(cfg.locations[mission.to])
+        local coords = cfg.locations[mission.to].xyz
         local exitingVehicle = false
 
         ShowNotification(_L("taxi_dropoff"))

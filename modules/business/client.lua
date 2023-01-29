@@ -3,6 +3,17 @@ STATUS = {
     DUTY = false
 }
 
+local function createBlip(settings, coords)
+	local blip = AddBlipForCoord(coords.x, coords.y, coords.z)
+	SetBlipSprite(blip, settings.id)
+	SetBlipDisplay(blip, 4)
+	SetBlipScale(blip, settings.scale)
+	SetBlipColour(blip, settings.colour)
+	SetBlipAsShortRange(blip, true)
+	BeginTextCommandSetBlipName(settings.name)
+	EndTextCommandSetBlipName(blip)
+end
+
 function GetStatus()
     return STATUS
 end
@@ -34,8 +45,8 @@ function OpenVehicleMenu(businessID)
     }, function(selected, scrollIndex, args)
         local ped = PlayerPedId()
         local vehicleData = cfg.vehicles[options[selected].value]
-        local coords, heading = v3(cfg.locations.vehicle)
-        local vehicle = CreateVeh(vehicleData.model, coords.x, coords.y, coords.z, heading, true, true)
+        local coords = cfg.locations.vehicle
+        local vehicle = CreateVeh(vehicleData.model, coords.x, coords.y, coords.z, coords.w, true, true)
         TaskWarpPedIntoVehicle(ped, vehicle, -1)
         ShowNotification(_L("vehicle_spawned"))
     end)
@@ -86,7 +97,7 @@ CreateThread(function()
             CreateBlip(Config.Businesses[i].blip)
         end
     end
---[[     while true do 
+    --[[ while true do 
         local wait = 1000
         for i=1, #Config.Businesses do 
             local cfg = Config.Businesses[i]
@@ -107,19 +118,19 @@ CreateThread(function()
         Wait(wait)
     end ]]
 end)
+--
 -- Create Zones and Blips
+local hasTextUi = false
 
 local function nearby(self)
+
     DrawMarker(2, self.coords.x, self.coords.y, self.coords.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.25, 0.25, 0.25, 255, 255, 255, 127, false, true)
 
-    if self.currentDistance < 1 and IsControlJustReleased(0, 38) then
-        
+    if self.currentDistance < 1 and IsControlJustReleased(0, 51) then
         lib.hideTextUI()
         InteractLocation(self.businessID, self.locationID)
     end
 end
-
-local hasTextUi = false
 
 local function onEnter(self)
     hasTextUi = true
@@ -138,12 +149,12 @@ for i=1, #Config.Businesses do
         for p = 1, #k do
             lib.points.new({
                 coords = v.xyz,
-                distance = 1.5,
+                distance = 5,
                 nearby = nearby,
                 onEnter = onEnter,
                 onExit = onExit,
                 businessID = i,
-                locationID = k
+                locationID = k,
             })
         end
     end

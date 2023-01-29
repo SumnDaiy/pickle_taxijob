@@ -9,10 +9,10 @@ Config.Businesses = {
         info = { 
             id = "pickle_taxi",
             society = "taxi",
-            label = "Pickle's Taxi Company",
+            label = "Downtown Cab Co.",
         },
         blip = {
-            Label = "Pickle's Taxi Company",
+            Label = "Downtown Cab Co.",
             Location = vector3(912.0522, -174.0470, 74.2908),
             ID = 198,
             Display = 4,
@@ -32,25 +32,25 @@ Config.Businesses = {
                 groups = {
                     ["taxi"] = 0,
                 }
-            },
+            }--[[ ,
             {
                 label = "Limo", 
                 model = `stretch`, 
                 groups = {
                     ["taxi"] = 0,
                 }
-            },
+            }, ]]
         },
         locations = {
             vehicle = vector4(916.0678, -163.4347, 74.6782, 152.6545),
-            boss = vector3(895.5319, -179.3002, 74.7003),
+            --boss = vector3(895.5319, -179.3002, 74.7003),
             duty = vector3(900.5847, -171.5111, 74.0756)
         }
     }
 }
 
 Config.Missions = {
-    loop = false, -- Keep doing missions until /taxijob is used.
+    loop = true, -- Keep doing missions until /taxijob is used.
     reward = {name = "money", min = 10, max = 50, miles = 2.0}, -- multiples reward by miles traveled.
     models = {
         `s_m_m_cntrybar_01`,
@@ -61,8 +61,8 @@ Config.Missions = {
     },
     locations = {
         vector4(946.3250, -171.7351, 74.5242, 56.1620),
-        vector4(963.3705, -149.6545, 73.9146, 239.3231), -- REMOVE THIS
---[[         vector4(397.9923, -870.3594, 29.2102, 322.1986),
+        --vector4(963.3705, -149.6545, 73.9146, 239.3231), -- REMOVE THIS
+        vector4(397.9923, -870.3594, 29.2102, 322.1986),
         vector4(59.2745, -1483.8176, 29.2773, 270.6085),
         vector4(1246.3237, -1453.9513, 34.9354, 344.2509),
         vector4(-289.3166, -1847.9614, 26.2498, 4.3302),
@@ -70,6 +70,6 @@ Config.Missions = {
         vector4(181.9603, -322.1017, 43.9382, 211.4422),
         vector4(-514.8563, -260.6308, 35.5337, 211.8925),
         vector4(-1284.6191, 297.2318, 64.9439, 154.2817),
-        vector4(-1440.0933, -773.8246, 23.4396, 343.2090), ]]
+        vector4(-1440.0933, -773.8246, 23.4396, 343.2090),
     }
 }
